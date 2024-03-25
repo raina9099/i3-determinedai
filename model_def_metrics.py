@@ -2,8 +2,6 @@
 # to the Determined master via a Determined core.Context.
 # This allows you to view metrics in the WebUI.
 
-
-# NEW: Import Determined.
 import determined as det
 
 import numpy as np
@@ -70,14 +68,6 @@ def split_train_validation_test(matrix, train_ratio=0.7, val_ratio=0.2, test_rat
 
     return train_matrix, val_matrix, test_matrix
 
-# def train(model, train_matrix_csr, core_context):
-#     model.fit(train_matrix_csr)
-#     train_loss = evaluate_mse(model, train_matrix_csr)
-#     core_context.train.report_training_metrics(
-#         steps_completed=1,
-#         metrics={"train_loss": train_loss},
-#     )
-
 def train_one_epoch(model, train_matrix_csr, core_context, epoch_idx):
     model.fit(train_matrix_csr)
     train_loss = evaluate_mse(model, train_matrix_csr)
@@ -85,13 +75,6 @@ def train_one_epoch(model, train_matrix_csr, core_context, epoch_idx):
         steps_completed=epoch_idx+1,
         metrics={"train_loss": train_loss},
     )
-
-# def test(model, val_matrix_csr, core_context):
-#     val_loss = evaluate_mse(model, val_matrix_csr)
-#     core_context.train.report_validation_metrics(
-#         steps_completed=1,
-#         metrics={"val_loss": val_loss},
-#     )
     
 def test_one_epoch(model, val_matrix_csr, core_context, epoch_idx):
     val_loss = evaluate_mse(model, val_matrix_csr)
@@ -114,7 +97,6 @@ def main(core_context):
     iterations=10
     for idx, regularization in enumerate(regularizations):
         model = implicit.als.AlternatingLeastSquares(factors=factors, regularization=regularization, iterations=iterations, calculate_training_loss=True)
-    # matrix_conf = (matrix * alpha_val).astype('float')
         train_one_epoch(model, train_matrix_csr, core_context, idx)
         test_one_epoch(model, validation_matrix_csr, core_context, idx)
 
